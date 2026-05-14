@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Мурзик САНЬКА</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #0a0f1e 0%, #0c1222 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'Roboto', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+            padding: 20px;
+        }
+
+        /* ГЛАВНЫЙ КОНТЕЙНЕР — компактно, красиво, без лишнего веса */
+        .rainbow-switch {
+            max-width: 90vw;
+            width: 100%;
+            background: rgba(10, 20, 30, 0.55);
+            backdrop-filter: blur(3px);
+            border-radius: 68px;
+            padding: 2rem 2.2rem;
+            box-shadow: 0 25px 40px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            text-align: center;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Стиль для текста — крупно, сочно, glow-эффект для радужного сияния */
+        .glow-text {
+            font-size: clamp(1.8rem, 8vw, 3.8rem);
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            word-break: break-word;
+            white-space: normal;
+            line-height: 1.3;
+            text-shadow: 0 0 8px currentColor, 0 2px 4px rgba(0,0,0,0.3);
+            transition: color 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1), text-shadow 0.2s;
+            animation: softPulse 1.8s infinite alternate;
+        }
+
+        /* Лёгкая пульсация для сияния — делает «светится» ещё эффектнее */
+        @keyframes softPulse {
+            0% {
+                text-shadow: 0 0 2px currentColor, 0 0 5px rgba(255,255,200,0.3);
+            }
+            100% {
+                text-shadow: 0 0 12px currentColor, 0 0 18px rgba(255,255,220,0.6);
+            }
+        }
+
+        /* Дополнительная мини-информация (ненакладная) */
+        .info {
+            margin-top: 1.4rem;
+            font-size: 0.75rem;
+            color: #b7cdff;
+            opacity: 0.7;
+            letter-spacing: 0.5px;
+            font-weight: 400;
+            border-top: 1px dashed rgba(255,255,200,0.3);
+            display: inline-block;
+            padding-top: 0.9rem;
+        }
+
+        /* адаптация для совсем маленьких экранов */
+        @media (max-width: 520px) {
+            .rainbow-switch {
+                padding: 1.2rem 1.3rem;
+                border-radius: 48px;
+            }
+            .glow-text {
+                font-weight: 700;
+            }
+        }
+
+        /* для удобства на тачскринах — никаких лишних элементов */
+        button, a {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="rainbow-switch">
+    <!-- Радужное сообщение тебе лично))) -->
+    <div id="changingText" class="glow-text">🌈 первый текст</div>
+    <div class="info">✨ ОТ ДУШИ ЗА ДУШУ В ДУШУ ✨</div>
+</div>
+
+<script>
+    (function() {
+        const TEXT_ONE = "🌈 ЛОООХ";
+        const TEXT_TWO = "✨ ПИИИДР ✨";
+
+        const textElement = document.getElementById('changingText');
+        
+        // Проверка на всякий случай (если элемент вдруг не найден — тихо не ломаем)
+        if (!textElement) {
+            console.warn("Элемент #changingText не найден! Проверьте разметку.");
+            return;
+        }
+        
+        const rainbowColors = [
+            "#FF3B3B", // Красный (яркий)
+            "#FF8C42", // Оранжевый
+            "#FFD700", // Золотисто-жёлтый
+            "#3EBD3E", // Изумрудно-зелёный
+            "#3C9EFF", // Голубой / синий
+            "#6B4EFF", // Индиго / сине-фиолетовый
+            "#C55AFF"  // Фиолетовый
+        ];
+        
+        let colorIndex = 0;          // текущий индекс цвета радуги
+        let textState = true;        // true = показываем TEXT_ONE, false = показываем TEXT_TWO
+        
+
+        function updateRainbowAndText() {
+ 
+            const currentColor = rainbowColors[colorIndex % rainbowColors.length];
+            textElement.style.color = currentColor;
+
+            textElement.style.textShadow = `0 0 5px ${currentColor}, 0 0 10px rgba(0,0,0,0.3)`;
+            
+            if (textState) {
+                textElement.innerText = TEXT_ONE;
+            } else {
+                textElement.innerText = TEXT_TWO;
+            }
+        }
+        
+        function switchTextOnly() {
+            textState = !textState;
+            updateRainbowAndText();
+        }
+        
+        function rotateRainbowColor() {
+            // Переход к следующему цвету радуги
+            colorIndex = (colorIndex + 1) % rainbowColors.length;
+            // Применяем новый цвет к текущему тексту (сохраняя тот же текст, какой был)
+            const newColor = rainbowColors[colorIndex];
+            textElement.style.color = newColor;
+            textElement.style.textShadow = `0 0 6px ${newColor}, 0 0 12px rgba(0,0,0,0.3)`;
+        }
+        
+        setInterval(switchTextOnly, 2000);
+        setInterval(rotateRainbowColor, 320);
+        
+        colorIndex = 0;
+        textState = true;   // начинаем с первого текста
+        updateRainbowAndText();
+        
+    })();
+</script>
+</body>
+</html>
